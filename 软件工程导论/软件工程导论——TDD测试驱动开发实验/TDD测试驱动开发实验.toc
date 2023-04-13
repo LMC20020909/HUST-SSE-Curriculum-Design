@@ -1,0 +1,14 @@
+\contentsline {section}{\numberline {1}关于测试驱动开发}{2}{}%
+\contentsline {subsection}{\numberline {1.1}何谓测试驱动开发？}{2}{}%
+\contentsline {subsection}{\numberline {1.2}为何要使用TDD？}{2}{}%
+\contentsline {subsection}{\numberline {1.3}如何进行测试驱动开发？}{2}{}%
+\contentsline {section}{\numberline {2}实验内容——判断字符串是否是IPV4地址}{3}{}%
+\contentsline {subsection}{\numberline {2.1}判断字符串是否为空串}{3}{}%
+\contentsline {subsection}{\numberline {2.2}判断字符串是否可被.分成四段}{4}{}%
+\contentsline {subsection}{\numberline {2.3}判断每一段是否是在0到255之间的数字}{6}{}%
+\contentsline {subsection}{\numberline {2.4}判断是否存在以0开头的非零数字}{8}{}%
+\contentsline {subsection}{\numberline {2.5}判断字符串是否同时满足上述条件}{10}{}%
+\contentsline {section}{\numberline {3}代码展示}{12}{}%
+\contentsline {subsection}{\numberline {3.1}程序代码}{12}{}%
+\contentsline {subsection}{\numberline {3.2}测试代码}{13}{}%
+\contentsline {section}{\numberline {4}参考资料}{16}{}%

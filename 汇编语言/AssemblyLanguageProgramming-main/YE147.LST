@@ -1,0 +1,405 @@
+Microsoft (R) Macro Assembler Version 5.00                  12/27/21 14:12:07
+                                                             Page     1-1
+
+
+				.386 
+ 0000				DATA SEGMENT USE16 
+ 0000  0000			N		DW		0	
+						;读入的总数据数 
+ 0002  0000			NUM		DW      0		
+					;前六位是1的数据的个数 
+ 0004  0000			ISOK	DW      0			;GETHI�
+				��数返回值之一，当前的数是否为前
+				六位是1的数，是为1，否为0 
+ 0006  0000			READ	DW		0		
+					;GETNUM函数返回值之一，若成�
+				�返回读入的数 
+ 0008  0000			READOK	DW		0		
+					;GETNUM函数返回值之一，若成�
+				�返回1，否为0 
+ 000A  0001			REXP	DW		1		
+					;GETNUM函数所需中间变量，10的
+				累乘器 
+ 000C  000A[			OKNUM	DW		10 DUP(0)	;记录
+				前六位是1的数据 
+	   0000			
+			 ]	
+				
+ 0020  40			BUF		DB		64	
+						;读入缓冲区 
+ 0021  00					DB		0 
+ 0022  0040[					DB		64 DUP(0) 
+	   00			
+			 ]	
+				
+ 0062  54 68 69 73 20 70 72	OUT1	DB		'This program is used t
+				o test whether the first six bits in the binary
+				 sense of N positive numbers(0 <= x <= 65535) a
+				re 1',
+       6F 67 72 61 6D 20 69	
+       73 20 75 73 65 64 20	
+       74 6F 20 74 65 73 74	
+       20 77 68 65 74 68 65	
+       72 20 74 68 65 20 66	
+       69 72 73 74 20 73 69	
+       78 20 62 69 74 73 20	
+       69 6E 20 74 68 65 20	
+       62 69 6E 61 72 79 20	
+       73 65 6E 73 65 20 6F	
+       66 20 4E 20 70 6F 73	
+       69 74 69 76 65 20 6E	
+       75 6D 62 65 72 73 28	
+       30 20 3C 3D 20 78 20	
+       3C 3D 20 36 35 35 33	
+       35 29 20 61 72 65 20	
+       31 0D 0A 50 6C 65 61	
+       73 65 20 69 6E 70 75	
+       74 20 4E 28 30 20 3C	
+       3D 20 4E 20 3C 3D 20	
+Microsoft (R) Macro Assembler Version 5.00                  12/27/21 14:12:07
+                                                             Page     1-2
+
+
+       31 30 29 0D 0A 24	
+ 00FB  49 6E 70 75 74 20 57	OUT2	DB		'Input WORNG!!!', 0DH, 
+				0AH, '$' 
+       4F 52 4E 47 21 21 21	
+       0D 0A 24			
+ 010C  57 65 20 63 61 6C 63	OUT3	DB		'We calculate this kind
+				 of number,we get $' 
+       75 6C 61 74 65 20 74	
+       68 69 73 20 6B 69 6E	
+       64 20 6F 66 20 6E 75	
+       6D 62 65 72 2C 77 65	
+       20 67 65 74 20 24	
+ 0135  4E 20 69 73 20 74 6F	OUT4	DB		'N is too big!! ', 0DH,
+				 0AH, '$' 
+       6F 20 62 69 67 21 21	
+       20 0D 0A 24		
+ 0147  50 6C 65 61 64 20 69	OUT5	DB		'Plead input $' 
+       6E 70 75 74 20 24	
+ 0154  20 6E 75 6D 62 65 72	OUT6	DB		' numbers!', 0DH, 0AH, 
+				'$' 
+       73 21 0D 0A 24		
+ 0160  0D 0A 24			CRLF	DB		0DH, 0AH, '$' 
+ 0163  00			OUTNUM	DB		0		
+					;传递要输出的数据 
+ 0164				DATA ENDS 
+				 
+ 0000				STACK SEGMENT USE16 STACK 
+ 0000  0064[			        DW      100 DUP(0) 
+	   0000			
+			 ]	
+				
+ 00C8				STACK ENDS 
+				 
+ 0000				CODE SEGMENT USE16 
+				        ASSUME DS:DATA, CS:CODE, SS:STACK 
+ 0000  B8 ---- R		START:  MOV AX, DATA 
+ 0003  8E D8					MOV DS, AX 
+ 0005  B8 ---- R				MOV AX, STACK 
+ 0008  8E D0					MOV SS, AX 
+ 000A  8D 16 0062 R				LEA DX, OUT1		;输出
+				提示信息1 
+ 000E  B4 09					MOV AH, 9 
+ 0010  CD 21					INT 21H 
+ 0012  E8 00CB R		LOOPC:	CALL GETNUM			;循环
+				读入总数据数，直到读入成功 
+ 0015  83 3E 0008 R 01				CMP WORD PTR READOK, 1H 
+ 001A  75 F6					JNE LOOPC 
+ 001C  83 3E 0006 R 0A				CMP WORD PTR READ, 10 
+ 0021  0F 87 0028 R				JA	OVER 
+ 0025  EB 0B 90					JMP NOVER 
+ 0028  8D 16 0135 R		OVER:	LEA DX, OUT4 
+ 002C  B4 09					MOV AH, 9 
+ 002E  CD 21					INT 21H 
+ 0030  EB E0					JMP LOOPC 
+Microsoft (R) Macro Assembler Version 5.00                  12/27/21 14:12:07
+                                                             Page     1-3
+
+
+ 0032  A1 0006 R		NOVER:	MOV AX, WORD PTR READ;保存总数据�
+				� 
+ 0035  A3 0000 R				MOV N, AX 
+ 0038  8B C8					MOV CX, AX 
+ 003A  BB 0000					MOV BX, 0 
+ 003D  8D 16 0147 R				LEA DX, OUT5		;输出
+				提示信息 
+ 0041  B4 09					MOV AH, 9 
+ 0043  CD 21					INT 21H 
+ 0045  A1 0000 R				MOV AX, WORD PTR N 
+ 0048  A3 0163 R				MOV WORD PTR OUTNUM, AX 
+ 004B  E8 016C R				CALL OUTPUT 
+ 004E  8D 16 0154 R				LEA DX, OUT6 
+ 0052  B4 09					MOV AH, 9 
+ 0054  CD 21					INT 21H 
+ 0056  83 F9 00			LOOPF:	CMP CX, 0			;循环
+				读入,判断N次 
+ 0059  0F 84 0088 R				JE LOOPFND		
+					;CX = 0循环结束，进行输出
+					 
+ 005D  E8 00CB R		LOOPG:	CALL GETNUM			;循环
+				读入当前需判断的数，直到读入成�
+				� 
+ 0060  83 3E 0008 R 01				CMP WORD PTR READOK, 1H 
+ 0065  75 F6					JNE LOOPG 
+ 0067  FF 36 0006 R				PUSH WORD PTR READ	;利用
+				栈传递参数 
+ 006B  E8 0147 R				CALL TESTHI		
+					;调用函数检测前六位是否为1 
+ 006E  83 3E 0004 R 01				CMP WORD PTR ISOK, 1 
+ 0073  0F 85 0085 R				JNE NOTOK 
+ 0077  FF 06 0002 R				INC WORD PTR NUM 
+ 007B  A1 0006 R				MOV AX, WORD PTR READ 
+ 007E  89 87 000C R				MOV WORD PTR OKNUM[BX], AX;保�
+				��此符合条件的数 
+ 0082  83 C3 02					ADD BX, 2 
+ 0085  49			NOTOK:	DEC CX 
+ 0086  EB CE					JMP LOOPF 
+ 0088  8D 16 010C R		LOOPFND:LEA DX, OUT3		;输出提示�
+				�息3 
+ 008C  B4 09					MOV AH, 9 
+ 008E  CD 21					INT 21H 
+ 0090  A1 0002 R				MOV AX, WORD PTR NUM;输出符�
+				��条件的数的总数 
+ 0093  A3 0163 R				MOV WORD PTR OUTNUM, AX 
+ 0096  E8 016C R				CALL OUTPUT 
+ 0099  8D 16 0160 R				LEA DX, CRLF		;输出
+				换行 
+ 009D  B4 09					MOV AH, 9 
+ 009F  CD 21					INT 21H 
+ 00A1  8B 0E 0002 R				MOV CX, WORD PTR NUM;循环输�
+				��符合条件的数 
+ 00A5  BB 0000					MOV BX, 0 
+ 00A8  83 F9 00			LOOPH:	CMP CX, 0 
+Microsoft (R) Macro Assembler Version 5.00                  12/27/21 14:12:07
+                                                             Page     1-4
+
+
+ 00AB  0F 84 00C7 R				JE	LOOPHND 
+ 00AF  8B 87 000C R				MOV AX, WORD PTR OKNUM[BX];输�
+				��符合条件的数 
+ 00B3  A3 0163 R				MOV WORD PTR OUTNUM, AX 
+ 00B6  E8 016C R				CALL OUTPUT 
+ 00B9  8D 16 0160 R				LEA DX, CRLF		;输出
+				换行 
+ 00BD  B4 09					MOV AH, 9 
+ 00BF  CD 21					INT 21H 
+ 00C1  83 C3 02					ADD BX, 2 
+ 00C4  49					DEC CX 
+ 00C5  EB E1					JMP LOOPH 
+ 00C7  B4 4C			LOOPHND:MOV AH, 4CH			;程序
+				结束 
+ 00C9  CD 21			        INT 21H 
+						 
+ 00CB				GETNUM PROC				
+					;本函数用于输入一个十进制�
+				�，保存至READ中，若成功READOK为1，�
+				�则置0 
+ 00CB  60					PUSHA			
+					;保存信息 
+ 00CC  9C					PUSHF 
+ 00CD  C7 06 0006 R 0000			MOV WORD PTR READ, 0H;初始化
+				 
+ 00D3  C7 06 000A R 0001			MOV WORD PTR REXP, 1H 
+ 00D9  C7 06 0008 R 0001			MOV WORD PTR READOK, 1H 
+ 00DF  8D 16 0020 R				LEA DX, BUF		
+					;输入一个字符串 
+ 00E3  B4 0A					MOV AH, 10 
+ 00E5  CD 21					INT 21H 
+ 00E7  8D 16 0160 R				LEA DX, CRLF		;输出
+				换行 
+ 00EB  B4 09					MOV AH, 9 
+ 00ED  CD 21					INT 21H 
+ 00EF  8A 1E 0021 R				MOV BL, BUF+1		;将字
+				符串长度保存于BX 
+ 00F3  B7 00					MOV BH, 0 
+ 00F5  83 FB 00					CMP BX, 0		
+					;判断字符串是否为空 
+ 00F8  0F 84 0136 R				JE	GETWR 
+ 00FC  8B CB					MOV CX, BX 
+ 00FE  4B					DEC BX 
+ 00FF  8A 87 0022 R		LOOPB:	MOV AL, BYTE PTR BUF[BX+2];得到字符
+				串最尾端的字符，注意加2！！！ 
+ 0103  B4 00					MOV AH, 0		
+					;注意AH赋值0！！！ 
+ 0105  4B					DEC BX 
+ 0106  3D 0030					CMP AX, 30H		
+					;判断字符是否合法 
+ 0109  0F 88 0136 R				JS	GETWR 
+ 010D  3D 0039					CMP AX, 39H		
+					;判断字符是否合法 
+ 0110  0F 87 0136 R				JA GETWR 
+Microsoft (R) Macro Assembler Version 5.00                  12/27/21 14:12:07
+                                                             Page     1-5
+
+
+ 0114  2D 0030					SUB AX, 30H 
+ 0117  F7 26 000A R				MUL WORD PTR REXP	;AX与�
+				��乘器相乘，保存至AX 
+ 011B  0F 82 0136 R				JC	GETWR		
+					;检查输入是否超出范围 
+ 011F  01 06 0006 R				ADD WORD PTR READ, AX;READ加�
+				�这个值 
+ 0123  0F 82 0136 R				JC	GETWR		
+					;检查输入是否超出范围 
+ 0127  B8 000A					MOV AX, 10		
+					;累乘器乘10 
+ 012A  F7 26 000A R				MUL WORD PTR REXP 
+ 012E  A3 000A R				MOV WORD PTR REXP, AX 
+ 0131  E2 CC					LOOP LOOPB 
+ 0133  EB 0F 90					JMP ENDGET 
+ 0136  8D 16 00FB R		GETWR:	LEA DX, OUT2		;输出提示�
+				�息2 
+ 013A  B4 09					MOV AH, 9 
+ 013C  CD 21					INT 21H 
+ 013E  C7 06 0008 R 0000			MOV WORD PTR READOK, 0H 
+ 0144  9D			ENDGET:	POPF 
+ 0145  61					POPA 
+ 0146  C3					RET 
+ 0147				GETNUM ENDP 
+				 
+ 0147				TESTHI PROC				
+					;本函数用于判断一个数是否�
+				�六位为1，传递的参数保存至栈中，
+				结果保存于ISOK中，若�
+ 0147  55			        PUSH BP				;保存
+				信息 
+ 0148  8B EC			        MOV BP, SP 
+ 014A  60			        PUSHA				;保存
+				信息 
+ 014B  9C			        PUSHF 
+ 014C  8B 46 04			        MOV AX, 4[BP]		;得到传递�
+				�参数 
+ 014F  B9 0006			        MOV CX, 6			;循环
+				6次 
+ 0152  C7 06 0004 R 0000	        MOV WORD PTR ISOK, 0H 
+ 0158  D1 E0			LOOPA:  SHL AX, 1 
+ 015A  0F 83 0166 R		        JNC BITWR			;判断
+				进位标识符是否为1，若不是1则本数
+				不符合前六位均是1的要求 
+ 015E  E2 F8			        LOOP LOOPA 
+ 0160  C7 06 0004 R 0001	        MOV WORD PTR ISOK, 1H 
+ 0166  9D			BITWR:  POPF 
+ 0167  61			        POPA 
+ 0168  5D			        POP BP 
+ 0169  C2 0004			        RET 4 
+ 016C				TESTHI ENDP 
+				 
+ 016C				OUTPUT PROC				
+					;本函数用于将一个数按照10进
+Microsoft (R) Macro Assembler Version 5.00                  12/27/21 14:12:07
+                                                             Page     1-6
+
+
+				制位输出，输出的数为字OUTNUM，使�
+				�栈倒序输出 
+ 016C  60					PUSHA			
+					;保存信息 
+ 016D  9C					PUSHF 
+ 016E  A1 0163 R				MOV AX, WORD PTR OUTNUM 
+ 0171  BB 000A					MOV BX, 10 
+ 0174  33 C9					XOR CX, CX		
+					;清零 
+ 0176  33 D2			LOOPI:	XOR DX, DX 
+ 0178  F7 F3					DIV BX			
+					;AX除10除数保存至AX，余数保�
+				�至DX 
+ 017A  81 CA 0E30				OR 	DX, 0E30H	
+					;转换为ASCII码并将15号调用放�
+				��AL 
+ 017E  52					PUSH DX			
+					;DX压栈保存输出		
+					 
+ 017F  41					INC CX			
+					;计数 
+ 0180  3D 0000					CMP AX, 0		
+					;循环纸质AX为0 
+ 0183  75 F1					JNZ LOOPI 
+ 0185  58			LOOPJ:	POP AX 
+ 0186  CD 10					INT 10H 
+ 0188  E2 FB					LOOP LOOPJ 
+ 018A  9D					POPF 
+ 018B  61					POPA 
+ 018C  C3					RET 
+ 018D				OUTPUT ENDP 
+ 018D				CODE ENDS 
+				        END START 
+Microsoft (R) Macro Assembler Version 5.00                  12/27/21 14:12:07
+                                                             Symbols-1
+
+
+
+
+                N a m e         	Size	Length	 Align	Combine Class
+
+CODE . . . . . . . . . . . . . .  	16 Bit	018D	PARA	NONE	
+DATA . . . . . . . . . . . . . .  	16 Bit	0164	PARA	NONE	
+STACK  . . . . . . . . . . . . .  	16 Bit	00C8	PARA	STACK	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+BITWR  . . . . . . . . . . . . .  	L NEAR	0166	CODE
+BUF  . . . . . . . . . . . . . .  	L BYTE	0020	DATA
+
+CRLF . . . . . . . . . . . . . .  	L BYTE	0160	DATA
+
+ENDGET . . . . . . . . . . . . .  	L NEAR	0144	CODE
+
+GETNUM . . . . . . . . . . . . .  	N PROC	00CB	CODE	Length = 007C
+GETWR  . . . . . . . . . . . . .  	L NEAR	0136	CODE
+
+ISOK . . . . . . . . . . . . . .  	L WORD	0004	DATA
+
+LOOPA  . . . . . . . . . . . . .  	L NEAR	0158	CODE
+LOOPB  . . . . . . . . . . . . .  	L NEAR	00FF	CODE
+LOOPC  . . . . . . . . . . . . .  	L NEAR	0012	CODE
+LOOPF  . . . . . . . . . . . . .  	L NEAR	0056	CODE
+LOOPFND  . . . . . . . . . . . .  	L NEAR	0088	CODE
+LOOPG  . . . . . . . . . . . . .  	L NEAR	005D	CODE
+LOOPH  . . . . . . . . . . . . .  	L NEAR	00A8	CODE
+LOOPHND  . . . . . . . . . . . .  	L NEAR	00C7	CODE
+LOOPI  . . . . . . . . . . . . .  	L NEAR	0176	CODE
+LOOPJ  . . . . . . . . . . . . .  	L NEAR	0185	CODE
+
+N  . . . . . . . . . . . . . . .  	L WORD	0000	DATA
+NOTOK  . . . . . . . . . . . . .  	L NEAR	0085	CODE
+NOVER  . . . . . . . . . . . . .  	L NEAR	0032	CODE
+NUM  . . . . . . . . . . . . . .  	L WORD	0002	DATA
+
+OKNUM  . . . . . . . . . . . . .  	L WORD	000C	DATA	Length = 000A
+OUT1 . . . . . . . . . . . . . .  	L BYTE	0062	DATA
+OUT2 . . . . . . . . . . . . . .  	L BYTE	00FB	DATA
+OUT3 . . . . . . . . . . . . . .  	L BYTE	010C	DATA
+OUT4 . . . . . . . . . . . . . .  	L BYTE	0135	DATA
+OUT5 . . . . . . . . . . . . . .  	L BYTE	0147	DATA
+OUT6 . . . . . . . . . . . . . .  	L BYTE	0154	DATA
+OUTNUM . . . . . . . . . . . . .  	L BYTE	0163	DATA
+OUTPUT . . . . . . . . . . . . .  	N PROC	016C	CODE	Length = 0021
+OVER . . . . . . . . . . . . . .  	L NEAR	0028	CODE
+
+READ . . . . . . . . . . . . . .  	L WORD	0006	DATA
+READOK . . . . . . . . . . . . .  	L WORD	0008	DATA
+REXP . . . . . . . . . . . . . .  	L WORD	000A	DATA
+Microsoft (R) Macro Assembler Version 5.00                  12/27/21 14:12:07
+                                                             Symbols-2
+
+
+
+START  . . . . . . . . . . . . .  	L NEAR	0000	CODE
+
+TESTHI . . . . . . . . . . . . .  	N PROC	0147	CODE	Length = 0025
+
+@FILENAME  . . . . . . . . . . .  	TEXT  ye147		
+
+
+    182 Source  Lines
+    182 Total   Lines
+     41 Symbols
+
+  50908 + 449252 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

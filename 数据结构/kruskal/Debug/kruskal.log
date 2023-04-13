@@ -1,0 +1,6 @@
+﻿  kruskal.cpp
+C:\Users\86182\source\repos\kruskal\kruskal.cpp(38,2): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\86182\source\repos\kruskal\kruskal.cpp(50,3): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\86182\source\repos\kruskal\kruskal.cpp(66,3): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\86182\source\repos\kruskal\kruskal.cpp(69,3): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  kruskal.vcxproj -> C:\Users\86182\source\repos\kruskal\Debug\kruskal.exe

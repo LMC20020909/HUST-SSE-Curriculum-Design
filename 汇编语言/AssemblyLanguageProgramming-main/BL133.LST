@@ -1,0 +1,63 @@
+Microsoft (R) Macro Assembler Version 5.00                  12/20/21 11:40:13
+                                                             Page     1-1
+
+
+				assume cs:code,ds:data,ss:stack 
+				 
+ 0000				data segment 
+ 0000  0008[			        dw      8 dup(0) 
+	   0000			
+			 ]	
+				
+ 0010				data ends 
+				 
+ 0000				stack segment 
+ 0000  0008[			        dw      8 dup(0) 
+	   0000			
+			 ]	
+				
+ 0010				stack ends 
+				 
+ 0000				code segment 
+ 0000  B8 ---- R		start:  mov ax, stack 
+ 0003  8E D0			        mov ss, ax 
+ 0005  B8 ---- R		        mov ax, data 
+ 0008  8E D8			        mov ds, ax 
+ 000A  BC 0010			        mov sp, 16 
+ 000D  FF 36 0000		        push ds:[0] 
+ 0011  FF 36 0002		        push ds:[2] 
+ 0015  8F 06 0002		        pop ds:[2] 
+ 0019  8F 06 0000		        pop ds:[0] 
+ 001D  B8 4C00			        mov ax, 4c00h 
+ 0020  CD 21			        int 21h 
+ 0022				code ends 
+				        end start 
+Microsoft (R) Macro Assembler Version 5.00                  12/20/21 11:40:13
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CODE . . . . . . . . . . . . . .  	0022	PARA	NONE	
+DATA . . . . . . . . . . . . . .  	0010	PARA	NONE	
+STACK  . . . . . . . . . . . . .  	0010	PARA	NONE	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+START  . . . . . . . . . . . . .  	L NEAR	0000	CODE
+
+@FILENAME  . . . . . . . . . . .  	TEXT  bl133		
+
+
+     24 Source  Lines
+     24 Total   Lines
+      6 Symbols
+
+  51098 + 465446 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

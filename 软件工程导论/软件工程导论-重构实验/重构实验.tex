@@ -1,0 +1,899 @@
+\documentclass[a4paper]{article}
+\usepackage{ctex}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\pagestyle{fancy}
+\rhead{Mingchen Liu}
+\lstset{
+    %backgroundcolor=\color{red!50!green!50!blue!50},%代码块背景色为浅灰色
+    rulesepcolor= \color{gray}, %代码块边框颜色
+    breaklines=true,  %代码过长则换行
+    numbers=left, %行号在左侧显示
+    numberstyle= \small,%行号字体
+    %keywordstyle= \color{red},%关键字颜色
+    commentstyle=\color{gray}, %注释颜色
+    frame=shadowbox%用方框框住代码块
+    }
+
+% Title
+\title{重构实验}
+\author{刘铭宸\\软件工程2003班\\U202010783}
+\date{\today}
+ 
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\section{关于重构}
+\subsection{何谓重构？}
+正如《重构~改善既有代码的设计》一书中所言，\emph{重构是对软件内部结构的一种调整，目的是在
+不改变软件可观察行为的前提下，提高其可理解性，降低其修改成本。}
+\subsection{为何重构？}
+重构可以帮助改进软件的设计，使软件更容易理解，帮助找到bug，并提高编程速度。
+
+\textbf{需求的不断变动是重构的最根本缘由}，并且重构是每个开发人员都要面对的功课。 
+代码架构最初的设计也是通过精心的设计，具备良好架构的。可是随着时间的推移、需求的剧增，
+必须不断的修改原有的功能、追加新的功能，还免不了有一些缺陷须要修改。为了实现变动，不可避免的要违反最初的设计构架。
+通过一段时间之后，软件的架构就千疮百孔了。bug愈来愈多，愈来愈难维护，新的需求愈来愈难实现，最初的代码构架对新的需求渐渐的失去支持能力，而是成为一种制约。
+最后新需求的开发成本会超过开发一个新的软件的成本，这就使这个软件的生命走到了尽头。 
+代码重构就可以最大限度的避免这样一种现象。系统发展到必定阶段后，使用重构的方式，不改变系统的外部功能，只对内部的结构进行从新的整理。经过重构，不断的调整系统的结构，使系统对于需求的变动始终具备较强的适应能力。
+
+\subsection{如何重构？——寻找代码中的坏味道}
+根据书中所言，首先要找到代码中的“坏味道”，在根据相应的重构手法进行重构。
+\newpage
+
+\section{实验内容——重构实例}
+\subsection{神秘命名（Mysterious Name）}
+\begin{lstlisting}[language={java}]
+    public static void wordsReview(ArrayList<String> list, Set<Integer> set, ArrayList<Integer> fre){
+        File file=new File("C:\\Users\\86182\\Desktop\\wordsreview.txt");
+        File file1=new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try{
+            BufferedReader br=new BufferedReader(new FileReader(file));
+            BufferedReader br1=new BufferedReader(new FileReader(file1));
+            String str;
+            while((str=br.readLine())!=null){
+                list.add(str);
+            }
+            String n;
+            while ((n=br1.readLine())!=null && !n.equals("")){
+                fre.add(Integer.parseInt(n));
+            }
+            Random random=new Random();
+            while(set.size()<list.size()){
+                set.add(random.nextInt(list.size()));
+            }
+            br.close();
+            br1.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+\end{lstlisting}
+
+上述代码为一个用于单词复习的小程序中的一个函数，
+函数功能一是从本地的两个文件中分别读入将要复习的单词和这些单词对应的“频率”（用来衡量单词的复习状况），
+并将其分别存入两个ArrayList类型的变量中；二是生成随机数序列存入Set类型的变量中以打乱单词的出现顺序。
+
+从这段代码中可以闻出很多种坏味道，“神秘命名”无疑是可以一眼看出的问题。
+首先，函数名称“wordsReview”仅是将整个大程序的功能作为自己的声明，而没有体现该函数具体做什么；
+其次，函数中定义的许多局部变量如“br”、“br1”、“str”等名字都没有明确的含义。
+
+根据书中所言，我们可以使用\textbf{变量改名（Rename Variable）}、
+\textbf{改变函数声明（Change Function Declaration）}的方法对其进行重构。
+
+\subsubsection*{重构后的代码}
+\begin{lstlisting}[language={java}]
+    public static void wordsReadIn(ArrayList<String> wordList, Set<Integer> wordsOrderSet, ArrayList<Integer> frequencyList){
+        File file_word = new File("C:\\Users\\86182\\Desktop\\wordsreview.txt");
+        File file_frequency = new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try{
+            BufferedReader br_word = new BufferedReader(new FileReader(file_word));
+            BufferedReader br_frequency = new BufferedReader(new FileReader(file_frequency));
+            String str_word;
+            while((str_word = br_word.readLine()) != null){
+                wordList.add(str_word);
+            }
+            String str_frequency;
+            while ((str_frequency = br_frequency.readLine()) != null && !str_frequency.equals("")){
+                frequencyList.add(Integer.parseInt(str_frequency));
+            }
+            Random random = new Random();
+            while(wordsOrderSet.size()<wordList.size()){
+                wordsOrderSet.add(random.nextInt(wordList.size()));
+            }
+            br_word.close();
+            br_frequency.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+\end{lstlisting}
+
+\subsection{过长函数（Long Function）}
+\begin{lstlisting}[language={java}]
+    public static void wordsReadIn(ArrayList<String> wordList, Set<Integer> wordsOrderSet, ArrayList<Integer> frequencyList){
+        File file_word = new File("C:\\Users\\86182\\Desktop\\wordsreview.txt");
+        File file_frequency = new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try{
+            BufferedReader br_word = new BufferedReader(new FileReader(file_word));
+            BufferedReader br_frequency = new BufferedReader(new FileReader(file_frequency));
+            String str_word;
+            while((str_word = br_word.readLine()) != null){
+                wordList.add(str_word);
+            }
+            String str_frequency;
+            while ((str_frequency = br_frequency.readLine()) != null && !str_frequency.equals("")){
+                frequencyList.add(Integer.parseInt(str_frequency));
+            }
+            Random random = new Random();
+            while(wordsOrderSet.size()<wordList.size()){
+                wordsOrderSet.add(random.nextInt(wordList.size()));
+            }
+            br_word.close();
+            br_frequency.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+\end{lstlisting}
+
+承接上文，该函数还存在着“过长函数”的问题。该函数的主要功能是读入单词和对应频率，
+但在编程实现时为了省事就将“生成随机数作为单词出现的顺序”这一仅用两三行代码就能实现的功能也添加到了该函数中。
+
+根据书中所言，我们可以使用\textbf{提炼函数（Extract Function）}的方法对其进行重构。
+\subsubsection*{重构后的代码}
+\begin{lstlisting}[language={java}]
+    public static void wordsReadIn(ArrayList<String> wordList, ArrayList<Integer> frequencyList){
+        File file_word = new File("C:\\Users\\86182\\Desktop\\wordsreview.txt");
+        File file_frequency = new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try{
+            BufferedReader br_word = new BufferedReader(new FileReader(file_word));
+            BufferedReader br_frequency = new BufferedReader(new FileReader(file_frequency));
+            String str_word;
+            while((str_word = br_word.readLine()) != null){
+                wordList.add(str_word);
+            }
+            String str_frequency;
+            while ((str_frequency = br_frequency.readLine()) != null && !str_frequency.equals("")){
+                frequencyList.add(Integer.parseInt(str_frequency));
+            }
+            br_word.close();
+            br_frequency.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void getWordsOrder(ArrayList<String> wordList, Set<Integer> wordsOrderSet){
+        Random random = new Random();
+        while(wordsOrderSet.size()<wordList.size()){
+            wordsOrderSet.add(random.nextInt(wordList.size()));
+        }
+    }
+\end{lstlisting}
+
+\subsection{全局数据（Global Data）}
+\begin{lstlisting}[language={java}]
+    public class SimpleFrame extends JFrame {
+        JLabel wordLabel = new JLabel();
+        JLabel frequencyLabel = new JLabel();
+        MeaningLabel meaningLabel;
+        ArrayList<String> wordList = new ArrayList<>();
+        Set<Integer> wordsOrderSet = new LinkedHashSet<>();
+        ArrayList<String> wordRandomList = new ArrayList<>();
+        ArrayList<Integer> frequencyList = new ArrayList<>();
+        Map<String,Integer> wordFrequencyMap = new HashMap<>();
+        ......
+    }
+\end{lstlisting}
+
+上述代码为一个界面类的成员变量，可以看到在编程时为了能够随时在程序的任何部分对其进行修改访问，
+将这些成员变量的作用域设置为“缺省”，即可以在同一包中的任何类中对其进行访问，所以存在着“全局数据”的问题。
+
+根据书中所言，我们可以使用\textbf{封装变量（Encapsulate Variable）}的方法对其进行重构。
+\subsubsection*{重构后的代码}
+\begin{lstlisting}[language={java}]
+    public class SimpleFrame extends JFrame {
+        private JLabel wordLabel = new JLabel();
+        private JLabel frequencyLabel = new JLabel();
+        private MeaningLabel meaningLabel;
+        private ArrayList<String> wordList = new ArrayList<>();
+        private Set<Integer> wordsOrderSet = new LinkedHashSet<>();
+        private ArrayList<String> wordRandomList = new ArrayList<>();
+        private ArrayList<Integer> frequencyList = new ArrayList<>();
+        private Map<String,Integer> wordFrequencyMap = new HashMap<>();
+        ......
+        public JLabel getWordLabel() {
+        return wordLabel;
+    }
+
+        public void setWordLabel(JLabel wordLabel) {
+            this.wordLabel = wordLabel;
+        }
+
+        public JLabel getFrequencyLabel() {
+            return frequencyLabel;
+        }
+
+        public void setFrequencyLabel(JLabel frequencyLabel) {
+            this.frequencyLabel = frequencyLabel;
+        }
+
+        public MeaningLabel getMeaningLabel() {
+            return meaningLabel;
+        }
+
+        public void setMeaningLabel(MeaningLabel meaningLabel) {
+            this.meaningLabel = meaningLabel;
+        }
+
+        public ArrayList<String> getWordList() {
+            return wordList;
+        }
+
+        public void setWordList(ArrayList<String> wordList) {
+            this.wordList = wordList;
+        }
+
+        public Set<Integer> getWordsOrderSet() {
+            return wordsOrderSet;
+        }
+
+        public void setWordsOrderSet(Set<Integer> wordsOrderSet) {
+            this.wordsOrderSet = wordsOrderSet;
+        }
+
+        public ArrayList<String> getWordRandomList() {
+            return wordRandomList;
+        }
+
+        public void setWordRandomList(ArrayList<String> wordRandomList) {
+            this.wordRandomList = wordRandomList;
+        }
+
+        public ArrayList<Integer> getFrequencyList() {
+            return frequencyList;
+        }
+
+        public void setFrequencyList(ArrayList<Integer> frequencyList) {
+            this.frequencyList = frequencyList;
+        }
+
+        public Map<String, Integer> getWordFrequencyMap() {
+            return wordFrequencyMap;
+        }
+
+        public void setWordFrequencyMap(Map<String, Integer> wordFrequencyMap) {
+            this.wordFrequencyMap = wordFrequencyMap;
+        }
+    }
+\end{lstlisting}
+
+\subsection{异曲同工的类（Alternative Classes）}
+\begin{lstlisting}[language={java}]
+    import java.awt.*;
+    import java.util.*;
+    public class SimpleLayout implements LayoutManager2{
+        Map<Component, MyDimension> componentMap =new HashMap<>();
+        @Override
+        public void addLayoutComponent(Component comp, Object constraints) {
+            componentMap.put(comp,(MyDimension) constraints);
+        }
+
+        @Override
+        public Dimension maximumLayoutSize(Container target) {
+            return null;
+        }
+
+        @Override
+        public float getLayoutAlignmentX(Container target) {
+            return 0;
+        }
+
+        @Override
+        public float getLayoutAlignmentY(Container target) {
+            return 0;
+        }
+
+        @Override
+        public void invalidateLayout(Container target) {
+
+        }
+
+        @Override
+        public void addLayoutComponent(String name, Component comp) {
+
+        }
+
+        @Override
+        public void removeLayoutComponent(Component comp) {
+            componentMap.remove(comp);
+        }
+
+        @Override
+        public Dimension preferredLayoutSize(Container parent) {
+            return null;
+        }
+
+        @Override
+        public Dimension minimumLayoutSize(Container parent) {
+            return null;
+        }
+
+        @Override
+        public void layoutContainer(Container parent) {
+            int width=parent.getWidth();
+            int height=parent.getHeight();
+            Set<Component> set= componentMap.keySet();
+            for(Component i:set){
+                i.setBounds(width* componentMap.get(i).getLeft() /400, height* componentMap.get(i).getTop() /300, componentMap.get(i).getWidth(), componentMap.get(i).getHeight());
+            }
+        }
+    }
+\end{lstlisting}
+
+上述代码为一个自定义的布局器。SimpleLayout类实现了java.awt中的LayoutManager2接口，
+但实际上仅对addLayoutComponent()、removeLayoutComponent()和layoutContainer()三个函数进行了改动，
+而剩余大量的其他函数都是以默认方式实现。但由于接口实现类的特性，必须对接口类中所有声明的函数进行重写，
+导致自定义布局器中存在着较多无用代码，且每次实现一个布局器都会重复的出现，所以存在着“异曲同工的类”的问题。
+
+根据书中所言，我们可以使用\textbf{提炼超类（Extract Superclass）}和\textbf{函数上移（Pull Up Method）}的方法对其进行重构。
+\subsubsection*{重构后的代码}
+\begin{lstlisting}[language={java}]
+    import java.awt.*;
+    public abstract class LayoutAdapter implements LayoutManager2 {
+        @Override
+        public Dimension maximumLayoutSize(Container target) {
+            return null;
+        }
+
+        @Override
+        public float getLayoutAlignmentX(Container target) {
+            return 0;
+        }
+
+        @Override
+        public float getLayoutAlignmentY(Container target) {
+            return 0;
+        }
+
+        @Override
+        public void invalidateLayout(Container target) {
+
+        }
+
+        @Override
+        public void addLayoutComponent(String name, Component comp) {
+
+        }
+
+        @Override
+        public Dimension preferredLayoutSize(Container parent) {
+            return null;
+        }
+
+        @Override
+        public Dimension minimumLayoutSize(Container parent) {
+            return null;
+        }
+    }
+\end{lstlisting}
+\begin{lstlisting}[language={java}]
+    import java.awt.*;
+    import java.util.*;
+    public class SimpleLayout extends LayoutAdapter {
+        Map<Component, MyDimension> componentMap =new HashMap<>();
+        @Override
+        public void addLayoutComponent(Component comp, Object constraints) {
+            componentMap.put(comp,(MyDimension) constraints);
+        }
+
+        @Override
+        public void removeLayoutComponent(Component comp) {
+            componentMap.remove(comp);
+        }
+
+        @Override
+        public void layoutContainer(Container parent) {
+            int width=parent.getWidth();
+            int height=parent.getHeight();
+            Set<Component> set= componentMap.keySet();
+            for(Component i:set){
+                i.setBounds(width* componentMap.get(i).getLeft() /400, height* componentMap.get(i).getTop() /300, componentMap.get(i).getWidth(), componentMap.get(i).getHeight());
+            }
+        }
+    }
+\end{lstlisting}
+
+\subsection{重复代码（Duplicated Code）}
+\begin{lstlisting}[language={java}]
+    rememberButton.addActionListener((e)->{
+        if(count < getWordRandomList().size()-1){
+            String s= getWordLabel().getText();
+            getWordFrequencyMap().put(s, getWordFrequencyMap().get(s)-1);
+            getWordLabel().setText(getWordRandomList().get(++count));
+            getFrequencyLabel().setText(getWordFrequencyMap().get(getWordLabel().getText()).toString());
+        }
+        if(count == getWordRandomList().size()-1){
+            String s1= getWordLabel().getText();
+            getWordFrequencyMap().put(s1, getWordFrequencyMap().get(s1)-1);
+            count++;
+            frequencyRewriter(getWordList(), getWordFrequencyMap());
+        }
+    });
+
+    uncertainButton.addActionListener((e)->{
+        if(count < getWordRandomList().size()-1){
+            getWordLabel().setText(getWordRandomList().get(++count));
+            getFrequencyLabel().setText(getWordFrequencyMap().get(getWordLabel().getText()).toString());
+        }
+        if(count == getWordRandomList().size()-1){
+            count++;
+            frequencyRewriter(getWordList(), getWordFrequencyMap());
+        }
+    });
+
+    forgetButton.addActionListener((e)->{
+        if(count < getWordRandomList().size()-1){
+            String s= getWordLabel().getText();
+            getWordFrequencyMap().put(s, getWordFrequencyMap().get(s)+1);
+            setMeaningLabel(new MeaningLabel(s));
+            rememberButton.setVisible(false);
+            uncertainButton.setVisible(false);
+            forgetButton.setVisible(false);
+            preButton.setVisible(false);
+            knowButton.setVisible(true);
+            panel.add(getMeaningLabel(),new MyDimension(100,100,200,90));
+            panel.add(knowButton,new MyDimension(150,200,100,30));
+            getMeaningLabel().setBounds(100,100,200,60);
+        }
+        if(count == getWordRandomList().size()-1){
+            String s1= getWordLabel().getText();
+            getWordFrequencyMap().put(s1, getWordFrequencyMap().get(s1)+1);
+            count++;
+            frequencyRewriter(getWordList(), getWordFrequencyMap());
+        }
+    });
+\end{lstlisting}
+
+上述代码为实现三个按钮rememberButton、uncertainButton和forgetButton的监听器事件的匿名内部类，
+目的是为了在用户点击不同按钮时实现相应的功能，并在用户复习完所有单词后将新的频率重写回频率文件。
+在实现“重写回文件”的功能时，三个按钮都几乎进行了同样的操作，仅有细微的不同。所以存在着“重复代码”的问题。
+
+根据书中所言，我们可以使用\textbf{提炼函数（Extract Function）}的方法对其进行重构。
+\subsubsection*{重构后的代码}
+\begin{lstlisting}[language={java}]
+    rememberButton.addActionListener((e)->{
+        if(count < getWordRandomList().size()-1){
+            String s = getWordLabel().getText();
+            getWordFrequencyMap().put(s, getWordFrequencyMap().get(s)-1);
+            nextWord();
+        }
+        if(count == getWordRandomList().size()-1){
+            String s1 = getWordLabel().getText();
+            getWordFrequencyMap().put(s1, getWordFrequencyMap().get(s1)-1);
+            frequencyRewrite();
+        }
+    });
+
+    uncertainButton.addActionListener((e)->{
+        if(count < getWordRandomList().size()-1){
+            nextWord();
+        }
+        if(count == getWordRandomList().size()-1){
+            frequencyRewrite();
+        }
+    });
+
+    forgetButton.addActionListener((e)->{
+        if(count < getWordRandomList().size()-1){
+            String s = getWordLabel().getText();
+            getWordFrequencyMap().put(s, getWordFrequencyMap().get(s)+1);
+            setMeaningLabel(new MeaningLabel(s));
+            rememberButton.setVisible(false);
+            uncertainButton.setVisible(false);
+            forgetButton.setVisible(false);
+            preButton.setVisible(false);
+            knowButton.setVisible(true);
+            panel.add(getMeaningLabel(),new MyDimension(100,100,200,90));
+            panel.add(knowButton,new MyDimension(150,200,100,30));
+            getMeaningLabel().setBounds(100,100,200,60);
+        }
+        if(count == getWordRandomList().size()-1){
+            String s1 = getWordLabel().getText();
+            getWordFrequencyMap().put(s1, getWordFrequencyMap().get(s1)+1);
+            frequencyRewrite();
+        }
+    });
+
+    public void nextWord() {
+        getWordLabel().setText(getWordRandomList().get(++count));
+        getFrequencyLabel().setText(getWordFrequencyMap().get(getWordLabel().getText()).toString());
+    }
+
+    public void frequencyRewrite(){
+        count++;
+        frequencyRewriter(getWordList(), getWordFrequencyMap());
+    }
+\end{lstlisting}
+
+\subsection{数据泥团（Data Clumps）}
+\begin{lstlisting}[language={java}]
+    startButton.addActionListener((e)->{
+        startButton.setVisible(false);
+        getWordLabel().setText(getWordRandomList().get(++count));
+        getFrequencyLabel().setText(getWordFrequencyMap().get(getWordLabel().getText()).toString());
+        panel.add(getWordLabel(),150,60,100,30);
+        panel.add(rememberButton,150,100,100,30);
+        panel.add(uncertainButton,150,140,100,30);
+        panel.add(forgetButton,150,180,100,30);
+        panel.add(preButton,0,0,100,30);
+        panel.add(getFrequencyLabel(),150,250,100,30);
+    });
+\end{lstlisting}
+
+上述代码为实现开始按钮startButton监听器的匿名内部类，当用户点击该按钮时，将需要显示的组件添加到容器panel中去。
+在添加的时候，表示组件绝对位置的四个参数总是绑在一起出现，导致参数列表过长，出现了“数据泥团”的问题。
+
+根据书中所言，我们可以使用\textbf{引入参数对象（Introduce Parameter Declaration）}和\textbf{提炼类（Extract Class）}的方法对其进行重构。
+\subsubsection*{重构后的代码}
+\begin{lstlisting}[language={java}]
+    public class MyDimension {
+        private int left;
+        private int top;
+        private int width;
+        private int height;
+        public MyDimension(int left,int top,int width,int height){
+            this.setLeft(left);
+            this.setTop(top);
+            this.setWidth(width);
+            this.setHeight(height);
+        }
+
+        public int getLeft() {
+            return left;
+        }
+
+        public void setLeft(int left) {
+            this.left = left;
+        }
+
+        public int getTop() {
+            return top;
+        }
+
+        public void setTop(int top) {
+            this.top = top;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+    }
+
+\end{lstlisting}
+\begin{lstlisting}[language={java}]
+    startButton.addActionListener((e)->{
+        startButton.setVisible(false);
+        getWordLabel().setText(getWordRandomList().get(++count));
+        getFrequencyLabel().setText(getWordFrequencyMap().get(getWordLabel().getText()).toString());
+        panel.add(getWordLabel(),new MyDimension(150,60,100,30));
+        panel.add(rememberButton,new MyDimension(150,100,100,30));
+        panel.add(uncertainButton,new MyDimension(150,140,100,30));
+        panel.add(forgetButton,new MyDimension(150,180,100,30));
+        panel.add(preButton,new MyDimension(0,0,100,30));
+        panel.add(getFrequencyLabel(),new MyDimension(150,250,100,30));
+    });
+\end{lstlisting}
+
+\subsection{过长参数列表（Long Parameter List）}
+\begin{lstlisting}[language={java}]
+    public static void wordsReadIn(ArrayList<String> wordList, ArrayList<Integer> frequencyList){
+        File file_word = new File("C:\\Users\\86182\\Desktop\\wordsreview.txt");
+        File file_frequency = new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try{
+            BufferedReader br_word = new BufferedReader(new FileReader(file_word));
+            BufferedReader br_frequency = new BufferedReader(new FileReader(file_frequency));
+            String str_word;
+            while((str_word = br_word.readLine()) != null){
+                wordList.add(str_word);
+            }
+            String str_frequency;
+            while ((str_frequency = br_frequency.readLine()) != null && !str_frequency.equals("")){
+                frequencyList.add(Integer.parseInt(str_frequency));
+            }
+            br_word.close();
+            br_frequency.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void getWordsOrder(ArrayList<String> wordList, Set<Integer> wordsOrderSet){
+        Random random = new Random();
+        while(wordsOrderSet.size()<wordList.size()){
+            wordsOrderSet.add(random.nextInt(wordList.size()));
+        }
+    }
+
+    public static void frequencyRewriter(ArrayList<String> list,Map<String,Integer> map){
+        File file=new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try{
+            BufferedWriter bw=new BufferedWriter(new FileWriter(file));
+            for(String i:list){
+                bw.write(map.get(i).toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+\end{lstlisting}
+
+上述代码分别为读入单词、生成单词顺序和重写频率的函数，可以看到每个函数的参数列表都大致相同。
+实际上，在调用这些函数时，调用者所传入的参数就是该类中定义的成员变量，
+这些变量由函数自己来获得也是同样容易，出现了“过长参数列表”的问题。
+
+根据书中所言，我们可以使用\textbf{以查询取代参数（Replace Parameter with Query）}的方法对其进行重构。
+\subsubsection*{重构后的代码}
+\begin{lstlisting}[language={java}]
+    public class SimpleFrame extends JFrame {
+        ......
+        wordsReadIn();
+        getWordsOrder();
+        ......
+        public void wordsReadIn(){
+            File file_word = new File("C:\\Users\\86182\\Desktop\\wordsreview.txt");
+            File file_frequency = new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+            try{
+                BufferedReader br_word = new BufferedReader(new FileReader(file_word));
+                BufferedReader br_frequency = new BufferedReader(new FileReader(file_frequency));
+                String str_word;
+                while((str_word = br_word.readLine()) != null){
+                    wordList.add(str_word);
+                }
+                String str_frequency;
+                while ((str_frequency = br_frequency.readLine()) != null && !str_frequency.equals("")){
+                    frequencyList.add(Integer.parseInt(str_frequency));
+                }
+                br_word.close();
+                br_frequency.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        public void getWordsOrder(){
+            Random random = new Random();
+            while(wordsOrderSet.size()<wordList.size()){
+                wordsOrderSet.add(random.nextInt(wordList.size()));
+            }
+        }
+
+        public void frequencyRewriter(){
+            File file=new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+            try{
+                BufferedWriter bw=new BufferedWriter(new FileWriter(file));
+                for(String i:wordList){
+                    bw.write(wordFrequencyMap.get(i).toString());
+                    bw.newLine();
+                }
+                bw.flush();
+                bw.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+\end{lstlisting}
+
+\subsection{霰弹式修改（Shotgun Surgery）}
+\begin{lstlisting}[language={java}]
+    public static void frequencyWriter(int n){
+        File file1=new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try {
+            BufferedWriter bw=new BufferedWriter(new FileWriter(file1,true));
+            for(int i=0;i<n;i++) {
+                bw.write("5");
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void wordsReadIn(){
+        File file_word = new File("C:\\Users\\86182\\Desktop\\wordsreview.txt");
+        File file_frequency = new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try{
+            BufferedReader br_word = new BufferedReader(new FileReader(file_word));
+            BufferedReader br_frequency = new BufferedReader(new FileReader(file_frequency));
+            String str_word;
+            while((str_word = br_word.readLine()) != null){
+                wordList.add(str_word);
+            }
+            String str_frequency;
+            while ((str_frequency = br_frequency.readLine()) != null && !str_frequency.equals("")){
+                frequencyList.add(Integer.parseInt(str_frequency));
+            }
+            br_word.close();
+            br_frequency.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void frequencyRewriter(){
+        File file = new File("C:\\Users\\86182\\Desktop\\wordsFrequency.txt");
+        try{
+            BufferedWriter bw=new BufferedWriter(new FileWriter(file));
+            for(String i:wordList){
+                //System.out.println(map.get(i));
+                bw.write(wordFrequencyMap.get(i).toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+\end{lstlisting}
+
+上述代码为整个程序中需要对文件进行IO操作的三个函数。
+这三个函数分散在不同的类中，当需要对文件路径进行修改时，需要分别找到这三个函数各自对其进行修改，
+存在着“霰弹式修改”的问题。
+
+根据书中所言，我们可以使用\textbf{函数组合成类（Combine Functions into Class）}和\textbf{搬移函数（Move Function）}的方法对其进行重构。
+\subsubsection*{重构后的代码}
+\begin{lstlisting}[language={java}]
+    import java.io.*;
+import java.util.ArrayList;
+import java.util.Map;
+
+public class FileIO {
+    private String wordFile = "C:\\Users\\86182\\Desktop\\wordsreview.txt";
+    private String frequencyFile = "C:\\Users\\86182\\Desktop\\wordsFrequency.txt";
+    private ArrayList<String> wordList;
+    private Map<String,Integer> wordFrequencyMap;
+    private ArrayList<Integer> frequencyList;
+    private int newWordsNumber;
+    public FileIO(ArrayList<String> wordList, Map<String,Integer> wordFrequencyMap, ArrayList<Integer> frequencyList){
+        this.setWordList(wordList);
+        this.setWordFrequencyMap(wordFrequencyMap);
+        this.setFrequencyList(frequencyList);
+    }
+
+    public FileIO(int newWordsNumber){
+        this.setNewWordsNumber(newWordsNumber);
+    }
+
+    public void frequencyWriter(){
+        File file=new File(getFrequencyFile());
+        try {
+            BufferedWriter bw=new BufferedWriter(new FileWriter(file,true));
+            for(int i=0;i<newWordsNumber;i++) {
+                bw.write("5");
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void frequencyRewriter(){
+        File file = new File(getFrequencyFile());
+        try{
+            BufferedWriter bw=new BufferedWriter(new FileWriter(file));
+            for(String i: getWordList()){
+                bw.write(getWordFrequencyMap().get(i).toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void wordsReadIn(){
+        File file_word = new File(getWordFile());
+        File file_frequency = new File(getFrequencyFile());
+        try{
+            BufferedReader br_word = new BufferedReader(new FileReader(file_word));
+            BufferedReader br_frequency = new BufferedReader(new FileReader(file_frequency));
+            String str_word;
+            while((str_word = br_word.readLine()) != null){
+                getWordList().add(str_word);
+            }
+            String str_frequency;
+            while ((str_frequency = br_frequency.readLine()) != null && !str_frequency.equals("")){
+                getFrequencyList().add(Integer.parseInt(str_frequency));
+            }
+            br_word.close();
+            br_frequency.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public String getWordFile() {
+        return wordFile;
+    }
+
+    public void setWordFile(String wordFile) {
+        this.wordFile = wordFile;
+    }
+
+    public String getFrequencyFile() {
+        return frequencyFile;
+    }
+
+    public void setFrequencyFile(String frequencyFile) {
+        this.frequencyFile = frequencyFile;
+    }
+
+    public ArrayList<String> getWordList() {
+        return wordList;
+    }
+
+    public void setWordList(ArrayList<String> wordList) {
+        this.wordList = wordList;
+    }
+
+    public Map<String, Integer> getWordFrequencyMap() {
+        return wordFrequencyMap;
+    }
+
+    public void setWordFrequencyMap(Map<String, Integer> wordFrequencyMap) {
+        this.wordFrequencyMap = wordFrequencyMap;
+    }
+
+    public ArrayList<Integer> getFrequencyList() {
+        return frequencyList;
+    }
+
+    public void setFrequencyList(ArrayList<Integer> frequencyList) {
+        this.frequencyList = frequencyList;
+    }
+
+    public int getNewWordsNumber() {
+        return newWordsNumber;
+    }
+
+    public void setNewWordsNumber(int newWordsNumber) {
+        this.newWordsNumber = newWordsNumber;
+    }
+}
+\end{lstlisting}
+\section{参考资料}
+[1]教学课件：感谢华中科技大学软件学院刘小峰老师！
+
+[2]（美）马丁$\cdot$福勒（Martin Fowler）著. 熊节，林从羽译. 重构：改善既有代码的设计（第二版）. 人民邮电出版社
+\end{document} 

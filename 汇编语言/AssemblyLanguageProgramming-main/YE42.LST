@@ -1,0 +1,51 @@
+Microsoft (R) Macro Assembler Version 5.00                  12/22/21 18:04:10
+                                                             Page     1-1
+
+
+				.386 
+ 0000				DATA SEGMENT USE16 
+ 0000  03E8[			SUM	DW 1000 DUP(0) 
+	   0000			
+			 ]	
+				
+ 07D0				DATA ENDS 
+				 
+ 0000				CODE SEGMENT USE16 
+						ASSUME DS:DATA, CS:CODE 
+ 0000  B8 ---- R		START:	MOV AX, DATA 
+ 0003  8E D8					MOV DS, AX 
+ 0005  66| B8 00010001		                MOV EAX, 10001H 
+ 000B  67| C7 00 3456		                MOV WORD PTR [EAX], 3456H 
+ 0010  B0 4C					MOV AL, 4CH 
+ 0012  CD 21					INT 21H 
+ 0014				CODE ENDS 
+						END START 
+Microsoft (R) Macro Assembler Version 5.00                  12/22/21 18:04:10
+                                                             Symbols-1
+
+
+
+
+                N a m e         	Size	Length	 Align	Combine Class
+
+CODE . . . . . . . . . . . . . .  	16 Bit	0014	PARA	NONE	
+DATA . . . . . . . . . . . . . .  	16 Bit	07D0	PARA	NONE	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+START  . . . . . . . . . . . . .  	L NEAR	0000	CODE
+SUM  . . . . . . . . . . . . . .  	L WORD	0000	DATA	Length = 03E8
+
+@FILENAME  . . . . . . . . . . .  	TEXT  ye42		
+
+
+     15 Source  Lines
+     15 Total   Lines
+      6 Symbols
+
+  51098 + 465446 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

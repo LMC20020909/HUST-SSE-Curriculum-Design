@@ -1,0 +1,45 @@
+Microsoft (R) Macro Assembler Version 5.00                  12/20/21 10:30:47
+                                                             Page     1-1
+
+
+				ASSUME CS:CODESG 
+ 0000				CODESG SEGMENT 
+ 0000  B8 2000			        MOV ax,2000H 
+ 0003  8E D0			        MOV ss,ax 
+ 0005  BC 0000			        MOV sp,0 
+ 0008  83 C4 0A			        ADD sp,10 
+ 000B  58			        pop ax 
+ 000C  5B			        pop bx 
+ 000D  50			        push ax 
+ 000E  53			        push bx 
+ 000F  58			        pop ax 
+ 0010  5B			        pop bx 
+ 0011  B8 0C00			        mov ax,0c00H 
+ 0014  CD 21			        int 21H 
+ 0016				CODESG ENDS 
+				        END 
+Microsoft (R) Macro Assembler Version 5.00                  12/20/21 10:30:47
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CODESG . . . . . . . . . . . . .  	0016	PARA	NONE	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+@FILENAME  . . . . . . . . . . .  	TEXT  t1		
+
+
+     16 Source  Lines
+     16 Total   Lines
+      3 Symbols
+
+  51270 + 465274 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

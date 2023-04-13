@@ -1,0 +1,9 @@
+﻿  ExternalSort.cpp
+C:\Users\86182\source\repos\ExternalSorting\ExternalSort.cpp(101,7): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\86182\source\repos\ExternalSorting\ExternalSort.cpp(100,9): warning C4101: “k”: 未引用的局部变量
+C:\Users\86182\source\repos\ExternalSorting\ExternalSort.cpp(96,10): warning C4101: “b”: 未引用的局部变量
+C:\Users\86182\source\repos\ExternalSorting\ExternalSort.cpp(100,6): warning C4101: “i”: 未引用的局部变量
+C:\Users\86182\source\repos\ExternalSorting\ExternalSort.cpp(97,8): warning C4101: “fi”: 未引用的局部变量
+C:\Users\86182\source\repos\ExternalSorting\ExternalSort.cpp(99,11): warning C4101: “wa”: 未引用的局部变量
+C:\Users\86182\source\repos\ExternalSorting\ExternalSort.cpp(98,12): warning C4101: “ls”: 未引用的局部变量
+  ExternalSorting.vcxproj -> C:\Users\86182\source\repos\ExternalSorting\Debug\ExternalSorting.exe

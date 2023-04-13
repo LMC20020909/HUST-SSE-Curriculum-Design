@@ -1,0 +1,63 @@
+Microsoft (R) Macro Assembler Version 5.00                  12/20/21 10:24:23
+                                                             Page     1-1
+
+
+				.386 
+ 0000				DATA SEGMENT USE16 
+ 0000  0000			SUM     DW      0 
+ 0002				DATA ENDS 
+ 0000				STACK SEGMENT USE16 STACK 
+ 0000  00C8[					DB		200 DUP(0) 
+	   00			
+			 ]	
+				
+ 00C8				STACK ENDS 
+ 0000				CODE SEGMENT USE16 
+						ASSUME DS:DATA, SS:STACK, CS:CO
+				DE 
+ 0000  B8 ---- R		START:	MOV AX,DATA	 
+ 0003  8E D8					MOV DS,AX	 
+ 0005  B9 0032					MOV CX,50 
+ 0008  B8 0000					MOV AX,0 
+ 000B  BB 0001					MOV BX,1 
+ 000E  03 C3			NEXT:	ADD AX,BX 
+ 0010  43					INC BX 
+ 0011  49					DEC CX 
+ 0012  75 FA					JNE NEXT 
+ 0014  A3 0000 R				MOV SUM,AX 
+ 0017  B4 4C					MOV AH, 4CH 
+ 0019  CD 21					INT 21H 
+ 001B				CODE ENDS 
+						END START 
+Microsoft (R) Macro Assembler Version 5.00                  12/20/21 10:24:23
+                                                             Symbols-1
+
+
+
+
+                N a m e         	Size	Length	 Align	Combine Class
+
+CODE . . . . . . . . . . . . . .  	16 Bit	001B	PARA	NONE	
+DATA . . . . . . . . . . . . . .  	16 Bit	0002	PARA	NONE	
+STACK  . . . . . . . . . . . . .  	16 Bit	00C8	PARA	STACK	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+NEXT . . . . . . . . . . . . . .  	L NEAR	000E	CODE
+
+START  . . . . . . . . . . . . .  	L NEAR	0000	CODE
+SUM  . . . . . . . . . . . . . .  	L WORD	0000	DATA
+
+@FILENAME  . . . . . . . . . . .  	TEXT  ye28		
+
+
+     23 Source  Lines
+     23 Total   Lines
+      8 Symbols
+
+  51212 + 465332 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

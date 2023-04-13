@@ -1,0 +1,16 @@
+\contentsline {section}{\numberline {1}实际问题}{2}{}%
+\contentsline {section}{\numberline {2}问题求解}{2}{}%
+\contentsline {subsection}{\numberline {2.1}几何法求解}{2}{}%
+\contentsline {subsubsection}{\numberline {2.1.1}二分法}{2}{}%
+\contentsline {subsubsection}{\numberline {2.1.2}弦截法}{4}{}%
+\contentsline {subsubsection}{\numberline {2.1.3}Steffensen方法}{5}{}%
+\contentsline {subsubsection}{\numberline {2.1.4}比较分析}{7}{}%
+\contentsline {subsection}{\numberline {2.2}迭代法求解}{7}{}%
+\contentsline {subsubsection}{\numberline {2.2.1}Picard迭代法}{7}{}%
+\contentsline {subsubsection}{\numberline {2.2.2}Aitken加速迭代法（含导数）}{10}{}%
+\contentsline {subsubsection}{\numberline {2.2.3}Aitken加速迭代法（不含导数）}{11}{}%
+\contentsline {subsubsection}{\numberline {2.2.4}Newton迭代法}{13}{}%
+\contentsline {subsubsection}{\numberline {2.2.5}比较分析}{14}{}%
+\contentsline {section}{\numberline {3}实验结论}{15}{}%
+\contentsline {section}{\numberline {4}致谢}{16}{}%
+\contentsline {section}{\numberline {5}参考资料}{16}{}%

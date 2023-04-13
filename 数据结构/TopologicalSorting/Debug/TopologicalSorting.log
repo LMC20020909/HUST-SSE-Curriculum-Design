@@ -1,0 +1,5 @@
+﻿  TopoSort.cpp
+C:\Users\86182\source\repos\TopologicalSorting\TopoSort.cpp(26,2): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\86182\source\repos\TopologicalSorting\TopoSort.cpp(31,3): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\86182\source\repos\TopologicalSorting\TopoSort.cpp(36,3): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  TopologicalSorting.vcxproj -> C:\Users\86182\source\repos\TopologicalSorting\Debug\TopologicalSorting.exe

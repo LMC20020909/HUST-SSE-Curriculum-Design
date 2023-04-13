@@ -1,0 +1,17 @@
+\contentsline {section}{\numberline {1}问题一}{2}{}%
+\contentsline {subsection}{\numberline {1.1}ER模型}{2}{}%
+\contentsline {subsection}{\numberline {1.2}提取数据的sql语句}{6}{}%
+\contentsline {section}{\numberline {2}问题二}{8}{}%
+\contentsline {subsection}{\numberline {2.1}数据分析}{8}{}%
+\contentsline {subsubsection}{\numberline {2.1.1}拟合曲线}{8}{}%
+\contentsline {subsubsection}{\numberline {2.1.2}概率分布}{8}{}%
+\contentsline {subsubsection}{\numberline {2.1.3}统计规律}{9}{}%
+\contentsline {subsection}{\numberline {2.2}聚类分析}{9}{}%
+\contentsline {subsubsection}{\numberline {2.2.1}k-means}{10}{}%
+\contentsline {subsubsection}{\numberline {2.2.2}DBSCAN}{10}{}%
+\contentsline {subsection}{\numberline {2.3}库存管理的改进计划}{11}{}%
+\contentsline {section}{\numberline {3}致谢}{12}{}%
+\contentsline {section}{\numberline {4}参考资料}{12}{}%
+\contentsline {section}{\numberline {5}附录}{12}{}%
+\contentsline {subsection}{\numberline {5.1}k-means聚类分析代码}{12}{}%
+\contentsline {subsection}{\numberline {5.2}DBSCAN聚类分析代码}{13}{}%
